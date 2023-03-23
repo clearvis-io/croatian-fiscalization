@@ -61,7 +61,7 @@ class CroatianFiscalization
      *
      * @var string
      */
-    private string $url = 'https://cistest.apis-it.hr:8449/FiskalizacijaServiceTest'; //'https://cis.porezna-uprava.hr:8449/FiskalizacijaService';
+    private string $url;
 
     /**
      * Demo fiscalization.
@@ -75,19 +75,12 @@ class CroatianFiscalization
      *
      * @param Company $company
      */
-    public function configure(Company $company)
+    public function configure(Company $company, string $url)
     {
         $this->company = $company;
+        $this->url = $url;
 
-        if ($this->company->demo) {
-            $this->url = 'https://cistest.apis-it.hr:8449/FiskalizacijaServiceTest';
-        }
-
-        try {
-            $this->setCertificate($company->certificate->path, $company->certificate->password);
-        } catch (Exception $e) {
-            fwrite(STDERR, print_r('An exception happened: ' . $e->getMessage(), TRUE));
-        }
+        $this->setCertificate($company->certificate->content, $company->certificate->password);
     }
 
     /**
