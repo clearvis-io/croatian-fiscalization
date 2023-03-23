@@ -80,7 +80,7 @@ class CroatianFiscalization
         $this->company = $company;
         $this->url = $url;
 
-        $this->setCertificate($company->certificate->content, $company->certificate->password);
+        $this->setCertificate($company->certificate->path, $company->certificate->password);
     }
 
     /**
