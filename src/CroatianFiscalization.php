@@ -34,7 +34,6 @@ class CroatianFiscalization
      */
     private ?array $certificate;
 
-
     /**
      * Security protocol.
      *
@@ -206,8 +205,8 @@ class CroatianFiscalization
                 )
             );
             $fiscalizedInvoice->setNoteOfRedelivery(false);
-            $fiscalizedInvoice->zki = $fiscalizedInvoice->securityCode;
         }
+        $fiscalizedInvoice->zki = $fiscalizedInvoice->securityCode;
 
         $invoice_request = new InvoiceRequest($fiscalizedInvoice);
         try {
