@@ -360,7 +360,7 @@ class CroatianFiscalization
 
         $X509Issuer = $this->publicCertificateData['issuer'];
         $X509IssuerName = sprintf('O=%s,C=%s', $X509Issuer['O'], $X509Issuer['C']);
-        $X509IssuerSerial = $this->publicCertificateData['serialNumber'];
+        $X509IssuerSerial = $this->publicCertificateData['serialNumberHex'];
 
         $publicCertificatePureString = str_replace('-----BEGIN CERTIFICATE-----', '', $this->certificate['cert']);
         $publicCertificatePureString = str_replace('-----END CERTIFICATE-----', '', $publicCertificatePureString);
@@ -385,7 +385,7 @@ class CroatianFiscalization
         $X509IssuerNameNode = new DOMElement('X509IssuerName', $X509IssuerName);
         $X509IssuerSerialNode->appendChild($X509IssuerNameNode);
 
-        $X509SerialNumberNode = new DOMElement('X509SerialNumber', $X509IssuerSerial);
+        $X509SerialNumberNode = new DOMElement('X509SerialNumber', $this->bchexdec($X509IssuerSerial));
         $X509IssuerSerialNode->appendChild($X509SerialNumberNode);
 
         $envelope = new DOMDocument();
@@ -404,6 +404,16 @@ class CroatianFiscalization
 
         $envelope->getElementsByTagName('Body')->item(0)->appendChild($XMLRequestTypeNode);
         return $envelope->saveXML();
+    }
+
+    private function bchexdec($hex)
+    {
+        $dec = 0;
+        $len = strlen($hex);
+        for ($i = 1; $i <= $len; $i++) {
+            $dec = bcadd($dec, bcmul(strval(hexdec($hex[$i - 1])), bcpow('16', strval($len - $i))));
+        }
+        return $dec;
     }
 
     /**
