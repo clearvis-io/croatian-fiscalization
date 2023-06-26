@@ -119,14 +119,14 @@ class CroatianFiscalization
             ];
         }
 
-        if (!isset($invoiceObject->gross) || empty($invoiceObject->gross)) {
+        if (!isset($invoiceObject->gross)) {
             return (object) [
                 'success' => false,
                 'message' => 'Invoice gross is required.'
             ];
         }
 
-        if (!isset($invoiceObject->net) || empty($invoiceObject->net)) {
+        if (!isset($invoiceObject->net)) {
             return (object) [
                 'success' => false,
                 'message' => 'Invoice net is required.'
@@ -270,7 +270,7 @@ class CroatianFiscalization
         $fiscalizedInvoice->setInvoiceNumber($this->invoiceNumber);
         $fiscalizedInvoice->setNoteOfOrder('P');
         $fiscalizedInvoice->setDateTime($billedAt);
-        $taxRate = $this->company->shouldBeTaxed ? (100 * ($invoiceObject->gross / $invoiceObject->net - 1.0)) : 0;
+        $taxRate = $this->company->shouldBeTaxed && $invoiceObject->net != 0 ? (100 * ($invoiceObject->gross / $invoiceObject->net - 1.0)) : 0;
         $fiscalizedInvoice->setListTax([
             new TaxRate(round($taxRate, 2), $invoiceObject->net, ($invoiceObject->gross - $invoiceObject->net), null)
         ]);
