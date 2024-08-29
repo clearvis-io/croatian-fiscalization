@@ -126,13 +126,6 @@ class CroatianFiscalization
             ];
         }
 
-        if (!isset($invoiceObject->net)) {
-            return (object) [
-                'success' => false,
-                'message' => 'Invoice net is required.'
-            ];
-        }
-
         if (!isset($invoiceObject->number) || empty($invoiceObject->number)) {
             return (object) [
                 'success' => false,
@@ -270,10 +263,13 @@ class CroatianFiscalization
         $fiscalizedInvoice->setInvoiceNumber($this->invoiceNumber);
         $fiscalizedInvoice->setNoteOfOrder('P');
         $fiscalizedInvoice->setDateTime($billedAt);
-        $taxRate = $this->company->shouldBeTaxed && $invoiceObject->net != 0 ? (100 * ($invoiceObject->gross / $invoiceObject->net - 1.0)) : 0;
-        $fiscalizedInvoice->setListTax([
-            new TaxRate(round($taxRate, 2), $invoiceObject->net, ($invoiceObject->gross - $invoiceObject->net), null)
-        ]);
+
+        $taxList = [];
+        foreach ($invoiceObject->taxList as $values) {
+            $taxList[] = new TaxRate($values['rate'], $values['net'], $values['vatValue'], $values['taxRateName'] ?? null);
+        }
+
+        $fiscalizedInvoice->setListTax($taxList);
         $fiscalizedInvoice->setTotalValue($invoiceObject->gross);
         $fiscalizedInvoice->setTypeOfPayment($invoiceObject->fiscal_abbreviation);
         $fiscalizedInvoice->setOperativeUID($invoiceObject->userUID);
