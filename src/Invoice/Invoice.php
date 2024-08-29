@@ -53,7 +53,7 @@ class Invoice
      *
      * @var
      */
-    public int $totalValue;
+    public float $totalValue;
 
     /**
      * Type of payment.
